@@ -81,7 +81,6 @@ public class ProblemB {
 		// make any remaining connections 0 as there is no flow between them
 		for (String i : verticeDevices.keySet()) {
 			for (String j : verticeDevices.keySet()) {
-				System.out.println(i + " " + j);
 				if (!graph.containsKey(i)) {
 					HashMap<String, Integer> temp = new HashMap<String, Integer>();
 					temp.put(j, 0);
@@ -93,8 +92,7 @@ public class ProblemB {
 				}
 			}
 		}
-
-		System.out.println(graph);
+		
 		in.close();
 	}
 	
@@ -152,7 +150,26 @@ public class ProblemB {
         } 
   
         // Return the overall flow 
-        return max_flow; 
+		
+		// Flow is maximum now, find vertices reachable from s      
+		HashMap<String, Boolean> isVisited = new HashMap<String, Boolean>();
+		for (String s : verticeDevices.keySet()) {
+			isVisited.put(s, false);
+		}
+		
+		dfs(rGraph, start, isVisited); 
+          
+        // Print all edges that are from a reachable vertex to 
+        // non-reachable vertex in the original graph      
+        for (String i : verticeDevices.keySet()) { 
+            for (String j : verticeDevices.keySet()) { 
+                if (graph.get(i).get(j) > 0 && isVisited.get(i) && !isVisited.get(j)) { 
+                    System.out.println(i + " - " + j); 
+                } 
+            } 
+		} 
+		
+		return max_flow; 
 	}
 
 
@@ -190,5 +207,14 @@ public class ProblemB {
         // If we reached sink in BFS starting from source, then 
         // return true, else false 
         return (visited.get(t) == true); 
-    } 
+	} 
+	
+	void dfs(HashMap<String, HashMap<String, Integer>> rGraph, String s, HashMap<String, Boolean> visited) { 
+        visited.replace(s, true); 
+        for (String i : verticeDevices.keySet()) { 
+			if (rGraph.get(s).get(i) > 0 && !visited.get(i)) { 
+				dfs(rGraph, i, visited); 
+			} 
+        } 
+    }
 }

@@ -8,28 +8,27 @@ import java.util.HashMap;
 public class ProblemA {
 
 	public ProblemA(String infile) {
-		try {	
+		try {
 			processInput(infile);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.out.println("Exception encountered: " + e);
 		}
 	}
 
-	HashMap<String,HashMap<String,Integer>> paths = new HashMap<String,HashMap<String,Integer>>();
+	HashMap<String, HashMap<String, Integer>> paths = new HashMap<String, HashMap<String, Integer>>();
 	HashMap<String, String> numStations = new HashMap<String, String>();
-	
+
 	/**
-	 * A helper method to process the input file. 
+	 * A helper method to process the input file.
 	 * 
 	 * @param infile the file containing the input
 	 * @throws IOException
 	 */
-	public void processInput(String infile) throws IOException{
+	public void processInput(String infile) throws IOException {
 		BufferedReader in = new BufferedReader(new FileReader(infile));
 		while (in.ready()) {
 			String[] stations = in.readLine().split("\\s+");
-			
+
 			numStations.put(stations[0], stations[0]);
 			numStations.put(stations[1], stations[1]);
 
@@ -40,19 +39,20 @@ public class ProblemA {
 				temp.put(stations[1], Integer.MAX_VALUE);
 				paths.put(stations[0], temp);
 			}
-		} 
+		}
 		in.close();
 	}
-	
+
 	/**
-	 * Returns the number of routes between two stations for all pairs 
-	 * of stations, as described in the assignment spec. 
+	 * Returns the number of routes between two stations for all pairs of stations,
+	 * as described in the assignment spec.
 	 * 
 	 * @return the 2D hashmap containing the number of routes
 	 */
-	public HashMap<String,HashMap<String,Integer>> findNumberOfRoutes() {
-		// initialise 
-		HashMap<String,HashMap<String,Integer>> dist = new HashMap<String,HashMap<String,Integer>>();
+	public HashMap<String, HashMap<String, Integer>> findNumberOfRoutes() {
+		// initialise dist array depending on paths
+		HashMap<String, HashMap<String, Integer>> dist = new HashMap<String, HashMap<String, Integer>>();
+
 		for (String one : numStations.keySet()) {
 			for (String two : numStations.keySet()) {
 				if (paths.containsKey(one) && paths.get(one).containsKey(two)) {
@@ -65,11 +65,21 @@ public class ProblemA {
 					}
 				} else {
 					if (dist.containsKey(one)) {
-						dist.get(one).put(two, Integer.MAX_VALUE);
+						dist.get(one).put(two, 0);
 					} else {
 						HashMap<String, Integer> temp = new HashMap<String, Integer>();
-						temp.put(two, Integer.MAX_VALUE);
+						temp.put(two, 0);
 						dist.put(one, temp);
+					}
+				}
+			}
+		}
+
+		for (String k : numStations.keySet()) {
+			for (String i : numStations.keySet()) {
+				for (String j : numStations.keySet()) {
+					if (dist.get(i).get(k) * dist.get(k).get(j) > 0) {
+						dist.get(i).replace(j, dist.get(i).get(j) + dist.get(i).get(k) * dist.get(k).get(j));
 					}
 				}
 			}
@@ -77,16 +87,6 @@ public class ProblemA {
 
 		System.out.println(dist);
 
-		for (String i : numStations.keySet()) { 
-            for (String j : numStations.keySet()) { 
-                for (String k : numStations.keySet()) { 
-					if (dist.get(i).get(k) + dist.get(k).get(j) < dist.get(i).get(j)) {
-						dist.get(i).replace(j, dist.get(i).get(k) + dist.get(k).get(j)); 
-					}
-                } 
-            } 
-        } 
-		
 		return dist;
 	}
 }

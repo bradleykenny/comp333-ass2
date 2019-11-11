@@ -15,6 +15,9 @@ public class ProblemA {
 			System.out.println("Exception encountered: " + e);
 		}
 	}
+
+	HashMap<String,HashMap<String,Integer>> paths = new HashMap<String,HashMap<String,Integer>>();
+	HashMap<String, String> numStations = new HashMap<String, String>();
 	
 	/**
 	 * A helper method to process the input file. 
@@ -25,10 +28,19 @@ public class ProblemA {
 	public void processInput(String infile) throws IOException{
 		BufferedReader in = new BufferedReader(new FileReader(infile));
 		while (in.ready()) {
-			//something
-			in.readLine();
+			String[] stations = in.readLine().split("\\s+");
+			
+			numStations.put(stations[0], stations[0]);
+			numStations.put(stations[1], stations[1]);
+
+			if (paths.containsKey(stations[0])) {
+				paths.get(stations[0]).put(stations[1], Integer.MAX_VALUE);
+			} else {
+				HashMap<String, Integer> temp = new HashMap<String, Integer>();
+				temp.put(stations[1], Integer.MAX_VALUE);
+				paths.put(stations[0], temp);
+			}
 		} 
-		
 		in.close();
 	}
 	
@@ -38,11 +50,43 @@ public class ProblemA {
 	 * 
 	 * @return the 2D hashmap containing the number of routes
 	 */
-	public HashMap<String,HashMap<String,Integer>> findNumberOfRoutes(){
-		/*
-		 * INSERT YOUR CODE HERE
-		 */
-	
-		return null;
+	public HashMap<String,HashMap<String,Integer>> findNumberOfRoutes() {
+		// initialise 
+		HashMap<String,HashMap<String,Integer>> dist = new HashMap<String,HashMap<String,Integer>>();
+		for (String one : numStations.keySet()) {
+			for (String two : numStations.keySet()) {
+				if (paths.containsKey(one) && paths.get(one).containsKey(two)) {
+					if (dist.containsKey(one)) {
+						dist.get(one).put(two, 1);
+					} else {
+						HashMap<String, Integer> temp = new HashMap<String, Integer>();
+						temp.put(two, 1);
+						dist.put(one, temp);
+					}
+				} else {
+					if (dist.containsKey(one)) {
+						dist.get(one).put(two, Integer.MAX_VALUE);
+					} else {
+						HashMap<String, Integer> temp = new HashMap<String, Integer>();
+						temp.put(two, Integer.MAX_VALUE);
+						dist.put(one, temp);
+					}
+				}
+			}
+		}
+
+		System.out.println(dist);
+
+		for (String i : numStations.keySet()) { 
+            for (String j : numStations.keySet()) { 
+                for (String k : numStations.keySet()) { 
+					if (dist.get(i).get(k) + dist.get(k).get(j) < dist.get(i).get(j)) {
+						dist.get(i).replace(j, dist.get(i).get(k) + dist.get(k).get(j)); 
+					}
+                } 
+            } 
+        } 
+		
+		return dist;
 	}
 }

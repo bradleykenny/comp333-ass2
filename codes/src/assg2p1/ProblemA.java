@@ -75,6 +75,7 @@ public class ProblemA {
 			}
 		}
 
+		// update to find paths betweenn using floyd warshall
 		for (String k : numStations.keySet()) {
 			for (String i : numStations.keySet()) {
 				for (String j : numStations.keySet()) {
@@ -85,7 +86,17 @@ public class ProblemA {
 			}
 		}
 
-		System.out.println(dist);
+		for (String k : numStations.keySet()) {
+			if (dist.get(k).get(k) > 0) {
+				for (String i : numStations.keySet()) {
+					for (String j : numStations.keySet()) {
+						if (dist.get(i).get(k) * dist.get(k).get(j) > 0 || dist.get(i).get(k) * dist.get(k).get(j) < 0) {
+							dist.get(i).replace(j, -1);
+						}
+					}
+				}
+			}
+		}
 
 		return dist;
 	}

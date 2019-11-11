@@ -15,8 +15,8 @@ public class ProblemA {
 		}
 	}
 
-	HashMap<String, HashMap<String, Integer>> paths = new HashMap<String, HashMap<String, Integer>>();
-	HashMap<String, String> numStations = new HashMap<String, String>();
+	HashMap<String, HashMap<String, Integer>> paths = new HashMap<String, HashMap<String, Integer>>(); 
+	HashMap<String, String> numStations = new HashMap<String, String>(); // simply to hold all stations
 
 	/**
 	 * A helper method to process the input file.
@@ -53,7 +53,8 @@ public class ProblemA {
 		// initialise dist array depending on paths
 		HashMap<String, HashMap<String, Integer>> dist = new HashMap<String, HashMap<String, Integer>>();
 
-		// initialise all stations
+		// initialise all stations ->
+		// set to 1 if adjacent, 0 if no direct path between stations
 		for (String one : numStations.keySet()) {
 			for (String two : numStations.keySet()) {
 				if (paths.containsKey(one) && paths.get(one).containsKey(two)) {
@@ -76,7 +77,7 @@ public class ProblemA {
 			}
 		}
 
-		// update to find paths betweenn using floyd warshall
+		// update to find paths between using floyd-warshall algorithm
 		for (String k : numStations.keySet()) {
 			for (String i : numStations.keySet()) {
 				for (String j : numStations.keySet()) {
@@ -87,8 +88,9 @@ public class ProblemA {
 			}
 		}
 
-		// setting cycles to -1
+		// find and set cycles to -1
 		for (String k : numStations.keySet()) {
+			// if it has reached itself, change all paths that use that station to -1
 			if (dist.get(k).get(k) > 0) {
 				for (String i : numStations.keySet()) {
 					for (String j : numStations.keySet()) {

@@ -105,6 +105,7 @@ public class ProblemB {
 	 */
 	public Integer computeMinDevice() {
 		String u, v; 
+
 		// set up residual graph to be copy of initial graph
 		// if edge is 0, no connection between them
 		for (String i : verticeDevices.keySet()) {
@@ -119,12 +120,13 @@ public class ProblemB {
 			}
 		}
 
+		// initialise parent map with no parent for each station
 		HashMap<String, String> parent = new HashMap<String, String>();
 		for (String p : verticeDevices.keySet()) {
 			parent.put(p, "");
 		}
-		int max_flow = 0;
 
+		// while there is a path between the start and end, update residual graph
 		while (bfs(rGraph, start, end, parent)) {
 			int path_flow = Integer.MAX_VALUE;
 			
@@ -135,8 +137,7 @@ public class ProblemB {
 				v = parent.get(v);
             } 
   
-            // update residual capacities of the edges and 
-            // reverse edges along the path 
+            // update residual capacities of the edges and reverse edges along the path 
             v = end;
 			while (!v.equals(start)) {
                 u = parent.get(v); 
@@ -144,14 +145,10 @@ public class ProblemB {
 				rGraph.get(v).replace(u, rGraph.get(v).get(u) + path_flow); 
 				v = parent.get(v);
             } 
-  
-            // add path flow to overall flow 
-			max_flow += path_flow; 
 		} 
-  
-        // ==== below is new stuff ===== 
 		
-		// flow is maximum now, find vertices reachable from s      
+		// we now have maximum flow, find vertices reachable from s
+
 		HashMap<String, Boolean> isVisited = new HashMap<String, Boolean>();
 		for (String s : verticeDevices.keySet()) {
 			isVisited.put(s, false);
@@ -159,8 +156,7 @@ public class ProblemB {
 		
 		dfs(rGraph, start, isVisited); 
           
-        // print all edges that are from a reachable vertex to 
-		// non-reachable vertex in the original graph 
+        // print all edges that are from a reachable vertex to  non-reachable vertex in the original graph 
 		int val = 0;     
         for (String i : verticeDevices.keySet()) { 
             for (String j : verticeDevices.keySet()) { 
@@ -180,23 +176,21 @@ public class ProblemB {
 		return val; 
 	}
 
-
+	// helper bfs method
 	boolean bfs(HashMap<String, HashMap<String, Integer>> rGraph, String s, String t, HashMap<String, String> parent) { 
-        // Create a visited array and mark all vertices as not 
-        // visited 
+        // create a visited array and mark all vertices as not visited 
         HashMap<String, Boolean> visited = new HashMap<String, Boolean>();
         for (String v : verticeDevices.keySet()) { 
 			visited.put(v, false); 
 		}
   
-        // Create a queue, enqueue source vertex and mark 
-        // source vertex as visited 
+        // create a queue, enqueue source vertex and mark source vertex as visited 
         LinkedList<String> queue = new LinkedList<String>(); 
         queue.add(s); 
         visited.replace(s, true); 
         parent.replace(s, ""); 
   
-        // Standard BFS Loop 
+        // standard BFS loop 
         while (queue.size()!=0) 
         { 
             String u = queue.poll(); 
@@ -212,11 +206,11 @@ public class ProblemB {
             } 
         } 
   
-        // If we reached sink in BFS starting from source, then 
-        // return true, else false 
+        // if we reached end in BFS starting from start -> return true, else false 
         return (visited.get(t) == true); 
 	} 
 	
+	// standard dfs helper method
 	void dfs(HashMap<String, HashMap<String, Integer>> rGraph, String s, HashMap<String, Boolean> visited) { 
         visited.replace(s, true); 
         for (String i : verticeDevices.keySet()) { 

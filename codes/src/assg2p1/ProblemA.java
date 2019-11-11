@@ -53,6 +53,7 @@ public class ProblemA {
 		// initialise dist array depending on paths
 		HashMap<String, HashMap<String, Integer>> dist = new HashMap<String, HashMap<String, Integer>>();
 
+		// initialise all stations
 		for (String one : numStations.keySet()) {
 			for (String two : numStations.keySet()) {
 				if (paths.containsKey(one) && paths.get(one).containsKey(two)) {
@@ -86,6 +87,7 @@ public class ProblemA {
 			}
 		}
 
+		// setting cycles to -1
 		for (String k : numStations.keySet()) {
 			if (dist.get(k).get(k) > 0) {
 				for (String i : numStations.keySet()) {

@@ -3,7 +3,7 @@ package assg2p1;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -92,7 +92,7 @@ public class ProblemB {
 				}
 			}
 		}
-		
+
 		in.close();
 	}
 	
@@ -145,13 +145,13 @@ public class ProblemB {
 				v = parent.get(v);
             } 
   
-            // Add path flow to overall flow 
-            max_flow += path_flow; 
-        } 
+            // add path flow to overall flow 
+			max_flow += path_flow; 
+		} 
   
-        // Return the overall flow 
+        // ==== below is new stuff ===== 
 		
-		// Flow is maximum now, find vertices reachable from s      
+		// flow is maximum now, find vertices reachable from s      
 		HashMap<String, Boolean> isVisited = new HashMap<String, Boolean>();
 		for (String s : verticeDevices.keySet()) {
 			isVisited.put(s, false);
@@ -159,17 +159,25 @@ public class ProblemB {
 		
 		dfs(rGraph, start, isVisited); 
           
-        // Print all edges that are from a reachable vertex to 
-        // non-reachable vertex in the original graph      
+        // print all edges that are from a reachable vertex to 
+		// non-reachable vertex in the original graph 
+		int val = 0;     
         for (String i : verticeDevices.keySet()) { 
             for (String j : verticeDevices.keySet()) { 
                 if (graph.get(i).get(j) > 0 && isVisited.get(i) && !isVisited.get(j)) { 
-                    System.out.println(i + " - " + j); 
+					int temp = graph.get(i).get(j);
+					if (verticeDevices.get(i) > 0) {
+						temp = Math.min(temp, verticeDevices.get(i));
+					}
+					if (verticeDevices.get(j) > 0) {
+						temp = Math.min(temp, verticeDevices.get(j));
+					}
+					val += temp;
                 } 
             } 
 		} 
 		
-		return max_flow; 
+		return val; 
 	}
 
 

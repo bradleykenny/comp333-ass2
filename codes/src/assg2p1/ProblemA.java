@@ -33,13 +33,14 @@ public class ProblemA {
 			numStations.put(stations[1], stations[1]);
 
 			if (paths.containsKey(stations[0])) {
-				paths.get(stations[0]).put(stations[1], Integer.MAX_VALUE);
+				paths.get(stations[0]).put(stations[1], 1);
 			} else {
 				HashMap<String, Integer> temp = new HashMap<String, Integer>();
-				temp.put(stations[1], Integer.MAX_VALUE);
+				temp.put(stations[1], 1);
 				paths.put(stations[0], temp);
 			}
 		}
+		
 		in.close();
 	}
 
@@ -50,29 +51,16 @@ public class ProblemA {
 	 * @return the 2D hashmap containing the number of routes
 	 */
 	public HashMap<String, HashMap<String, Integer>> findNumberOfRoutes() {
-		// initialise dist array depending on paths
-		HashMap<String, HashMap<String, Integer>> dist = new HashMap<String, HashMap<String, Integer>>();
-
 		// initialise all stations ->
-		// set to 1 if adjacent, 0 if no direct path between stations
+		// add 0 to remaining stations that have no adj connection
 		for (String one : numStations.keySet()) {
 			for (String two : numStations.keySet()) {
-				if (paths.containsKey(one) && paths.get(one).containsKey(two)) {
-					if (dist.containsKey(one)) {
-						dist.get(one).put(two, 1);
-					} else {
-						HashMap<String, Integer> temp = new HashMap<String, Integer>();
-						temp.put(two, 1);
-						dist.put(one, temp);
-					}
-				} else {
-					if (dist.containsKey(one)) {
-						dist.get(one).put(two, 0);
-					} else {
-						HashMap<String, Integer> temp = new HashMap<String, Integer>();
-						temp.put(two, 0);
-						dist.put(one, temp);
-					}
+				if (!paths.containsKey(one)) {
+					HashMap<String, Integer> temp = new HashMap<String, Integer>();
+					temp.put(two, 0);
+					paths.put(one, temp);
+				} else if (!paths.get(one).containsKey(two)) {
+					paths.get(one).put(two, 0);
 				}
 			}
 		}
@@ -81,8 +69,8 @@ public class ProblemA {
 		for (String k : numStations.keySet()) {
 			for (String i : numStations.keySet()) {
 				for (String j : numStations.keySet()) {
-					if (dist.get(i).get(k) * dist.get(k).get(j) > 0) {
-						dist.get(i).replace(j, dist.get(i).get(j) + dist.get(i).get(k) * dist.get(k).get(j));
+					if (paths.get(i).get(k) * paths.get(k).get(j) > 0) {
+						paths.get(i).replace(j, paths.get(i).get(j) + paths.get(i).get(k) * paths.get(k).get(j));
 					}
 				}
 			}
@@ -91,17 +79,17 @@ public class ProblemA {
 		// find and set cycles to -1
 		for (String k : numStations.keySet()) {
 			// if it has reached itself, change all paths that use that station to -1
-			if (dist.get(k).get(k) > 0) {
+			if (paths.get(k).get(k) > 0) {
 				for (String i : numStations.keySet()) {
 					for (String j : numStations.keySet()) {
-						if (dist.get(i).get(k) * dist.get(k).get(j) > 0 || dist.get(i).get(k) * dist.get(k).get(j) < 0) {
-							dist.get(i).replace(j, -1);
+						if (paths.get(i).get(k) * paths.get(k).get(j) > 0 || paths.get(i).get(k) * paths.get(k).get(j) < 0) {
+							paths.get(i).replace(j, -1);
 						}
 					}
 				}
 			}
 		}
 
-		return dist;
+		return paths;
 	}
 }

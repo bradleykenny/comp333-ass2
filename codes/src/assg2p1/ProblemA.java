@@ -88,7 +88,7 @@ public class ProblemA {
 			if (paths.get(k).get(k) > 0) {
 				for (String i : stations) {
 					for (String j : stations) {
-						if (paths.get(i).get(k) * paths.get(k).get(j) > 0 || paths.get(i).get(k) * paths.get(k).get(j) < 0) {
+						if (paths.get(i).get(k) * paths.get(k).get(j) != 0) {
 							paths.get(i).replace(j, -1);
 						}
 					}

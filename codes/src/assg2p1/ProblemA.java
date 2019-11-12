@@ -40,6 +40,20 @@ public class ProblemA {
 				paths.put(stations[0], temp);
 			}
 		}
+
+		// initialise all stations ->
+		// add 0 to remaining stations that have no adj connection
+		for (String u : numStations.keySet()) {
+			for (String v : numStations.keySet()) {
+				if (!paths.containsKey(u)) {
+					HashMap<String, Integer> temp = new HashMap<String, Integer>();
+					temp.put(v, 0);
+					paths.put(u, temp);
+				} else if (!paths.get(u).containsKey(v)) {
+					paths.get(u).put(v, 0);
+				}
+			}
+		}
 		
 		in.close();
 	}
@@ -51,20 +65,6 @@ public class ProblemA {
 	 * @return the 2D hashmap containing the number of routes
 	 */
 	public HashMap<String, HashMap<String, Integer>> findNumberOfRoutes() {
-		// initialise all stations ->
-		// add 0 to remaining stations that have no adj connection
-		for (String one : numStations.keySet()) {
-			for (String two : numStations.keySet()) {
-				if (!paths.containsKey(one)) {
-					HashMap<String, Integer> temp = new HashMap<String, Integer>();
-					temp.put(two, 0);
-					paths.put(one, temp);
-				} else if (!paths.get(one).containsKey(two)) {
-					paths.get(one).put(two, 0);
-				}
-			}
-		}
-
 		// update to find paths between using floyd-warshall algorithm
 		for (String k : numStations.keySet()) {
 			for (String i : numStations.keySet()) {

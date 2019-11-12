@@ -3,6 +3,8 @@ package assg2p1;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProblemA {
@@ -16,7 +18,7 @@ public class ProblemA {
 	}
 
 	HashMap<String, HashMap<String, Integer>> paths = new HashMap<String, HashMap<String, Integer>>(); 
-	HashMap<String, String> numStations = new HashMap<String, String>(); // simply to hold all stations
+	ArrayList<String> stations = new ArrayList<String>(); // simply to hold all stations
 
 	/**
 	 * A helper method to process the input file.
@@ -27,24 +29,28 @@ public class ProblemA {
 	public void processInput(String infile) throws IOException {
 		BufferedReader in = new BufferedReader(new FileReader(infile));
 		while (in.ready()) {
-			String[] stations = in.readLine().split("\\s+");
+			String[] stationStr = in.readLine().split("\\s+");
 
-			numStations.put(stations[0], stations[0]);
-			numStations.put(stations[1], stations[1]);
+			if (!stations.contains(stationStr[0])) {
+				stations.add(stationStr[0]);
+			}
+			if (!stations.contains(stationStr[1])) {
+				stations.add(stationStr[1]);	
+			}			
 
-			if (paths.containsKey(stations[0])) {
-				paths.get(stations[0]).put(stations[1], 1);
+			if (paths.containsKey(stationStr[0])) {
+				paths.get(stationStr[0]).put(stationStr[1], 1);
 			} else {
 				HashMap<String, Integer> temp = new HashMap<String, Integer>();
-				temp.put(stations[1], 1);
-				paths.put(stations[0], temp);
+				temp.put(stationStr[1], 1);
+				paths.put(stationStr[0], temp);
 			}
 		}
 
 		// initialise all stations ->
 		// add 0 to remaining stations that have no adj connection
-		for (String u : numStations.keySet()) {
-			for (String v : numStations.keySet()) {
+		for (String u : stations) {
+			for (String v : stations) {
 				if (!paths.containsKey(u)) {
 					HashMap<String, Integer> temp = new HashMap<String, Integer>();
 					temp.put(v, 0);
@@ -66,9 +72,9 @@ public class ProblemA {
 	 */
 	public HashMap<String, HashMap<String, Integer>> findNumberOfRoutes() {
 		// update to find paths between using floyd-warshall algorithm
-		for (String k : numStations.keySet()) {
-			for (String i : numStations.keySet()) {
-				for (String j : numStations.keySet()) {
+		for (String k : stations) {
+			for (String i : stations) {
+				for (String j : stations) {
 					if (paths.get(i).get(k) * paths.get(k).get(j) > 0) {
 						paths.get(i).replace(j, paths.get(i).get(j) + paths.get(i).get(k) * paths.get(k).get(j));
 					}
@@ -77,11 +83,11 @@ public class ProblemA {
 		}
 
 		// find and set cycles to -1
-		for (String k : numStations.keySet()) {
+		for (String k : stations) {
 			// if it has reached itself, change all paths that use that station to -1
 			if (paths.get(k).get(k) > 0) {
-				for (String i : numStations.keySet()) {
-					for (String j : numStations.keySet()) {
+				for (String i : stations) {
+					for (String j : stations) {
 						if (paths.get(i).get(k) * paths.get(k).get(j) > 0 || paths.get(i).get(k) * paths.get(k).get(j) < 0) {
 							paths.get(i).replace(j, -1);
 						}

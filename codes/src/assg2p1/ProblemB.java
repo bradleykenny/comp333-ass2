@@ -157,7 +157,7 @@ public class ProblemB {
 		dfs(rGraph, start, isVisited); 
           
         // print all edges that are from a reachable vertex to  non-reachable vertex in the original graph 
-		int val = 0;     
+		int max_flow = 0;     
         for (String i : verticeDevices.keySet()) { 
             for (String j : verticeDevices.keySet()) { 
                 if (graph.get(i).get(j) > 0 && isVisited.get(i) && !isVisited.get(j)) { 
@@ -168,12 +168,12 @@ public class ProblemB {
 					if (verticeDevices.get(j) > 0) {
 						temp = Math.min(temp, verticeDevices.get(j));
 					}
-					val += temp;
+					max_flow += temp;
                 } 
             } 
 		} 
 		
-		return val; 
+		return max_flow; 
 	}
 
 	// helper bfs method
